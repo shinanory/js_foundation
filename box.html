@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Box App</title>
+	</head>
+  	<body>
+		<!-- <div class="a" id="b1"></div>
+		
+		<div class="a" id="b2"></div>
+		
+		<div class="a" id="b3"></div> -->
+		<!-- <div>
+			<span style="font-size: 15px;">我是15px</span>
+			<br>
+			<span style="">我是默认</span>
+		</div> -->
+		<!--
+			BFC是一类区域，该区域内元素不受外部元素的影响
+			overflow可以创建BFC
+			作用:
+			1. 计算检测浮动元素高度
+			2. 解决margin塌陷
+			3. 左右分栏布局（BFC区域不会和float产生交集）（固定大盒子宽度，子盒子可以自适应）
+		-->
+		<div style="background-color: aquamarine; overflow: auto;">
+			<div class="a" style="float: left;"></div>
+			<div class="a" style="float: left;"></div>
+			<div class="a" style="float: left;"></div>
+		</div>
+		<div style="background-color: blanchedalmond; float: left; width: 300px;">
+			<div class="a" style="float: left;"></div>
+			<div style="height: 150px; border: 1px solid black; background-color: rgb(255, 225, 127); overflow: hidden;">
+				测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试
+			</div>
+		</div>
+  	</body>
+</html>
+
+<style>
+.a {
+	width: 50px;
+	height: 50px;
+	margin: 5px;
+	border: 1px solid black;
+	background-color: antiquewhite;
+}
+#b1 {
+	box-sizing: content-box; /* 标准盒模型：w，h只算content */
+}
+#b2 {
+	box-sizing: border-box; /* IE盒模型：w，h算content+padding+border */
+}
+</style>

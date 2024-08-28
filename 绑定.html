@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Js App</title>
+	</head>
+  	<body>
+		<div class="a" id="b1"></div>
+		<script>
+            /*
+                call : 改变this指向，第一个参数是this指向的对象，后面的参数是函数的参数
+                apply : 改变this指向，第一个参数是this指向的对象，第二个参数是函数的参数，参数是数组
+                bind : 返回一个函数并永久改变其this指向，第一个参数是this指向的对象，后面的参数是函数的参数
+                    (调用新函数约等于调用原函数的apply（手动实现）)
+            */
+
+            Function.prototype.myBind = function(context){
+                if (typeof this !== "function") {
+                    throw new Error("Type error");
+                }
+                let args = [...arguments].slice(1)
+                let fn = this
+                console.log(fn)
+                return function Fn(){
+                    fn.apply(this instanceof Fn ? this : context, args.concat(...arguments))
+                }
+            }
+
+            let obj = {
+                a: 1,
+            }
+
+            function fn(b, c) {
+                console.log(this, this.a, b, c);
+            };
+
+            let fn2 = fn.myBind(obj)
+            console.log(fn2.prototype)
+            fn2(2, 3)
+		</script>
+  	</body>
+</html>
+
+<style>
+.a {
+	width: 200px;
+	height: 200px;
+	margin-left: 50px;
+	background-color: antiquewhite;
+}
+</style>

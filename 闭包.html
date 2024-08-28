@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Js App</title>
+	</head>
+  	<body>
+		<div class="a" id="b1"></div>
+		<script>
+            // 闭包：函数内部的函数
+            // 特点：子函数可以读取父函数内的let变量，但外部无法访问父函数内的变量；会导致内存泄露
+            // 应用：隐藏数据，只提供API；保留私有状态
+			function fn(){
+                let num = 0;
+                return () => {
+                    num++
+                    console.log(num)
+                }
+            } //隐藏num，只提供读取
+
+            let a = fn()
+            a()
+		</script>
+  	</body>
+</html>
+
+<style>
+.a {
+	width: 200px;
+	height: 200px;
+	margin-left: 50px;
+	background-color: antiquewhite;
+}
+</style>

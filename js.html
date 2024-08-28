@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Js App</title>
+	</head>
+  	<body>
+		<div class="a" id="b1"></div>
+		<script>
+			// console.log(typeof(2));
+			// console.log(typeof('2'));
+			// console.log(typeof(Symbol()));
+			// console.log(typeof(null));
+
+			// class People {}
+			// class Student extends People {}
+			// let a = new Student()
+			// console.log(a instanceof People);
+
+			function deepclone(obj){
+				if (obj == null){
+					return obj
+				}
+				if (typeof(obj) === "object"){
+					let newObj = Array.isArray(obj) ? []:{}
+					for (const key in obj){
+						newObj[key] = deepclone(obj[key])
+					}
+
+					return newObj
+				}
+				else{
+					return obj
+				}
+			}
+
+			const target = {
+				field1: 1,
+				field2: undefined,
+				field3: 'ConardLi',
+				field4: {
+					child: 'child',
+					child2: {
+						child2: 'child2'
+					}
+				},
+				field5: [2, 3, 6]
+			};
+			console.log(target)
+			console.log(deepclone(target))
+
+			function Person(name, age){ 
+				this.name = name;
+				this.age = age;
+			}
+			
+			Person.prototype.motherland = 'China'
+			let person01 = new Person('小明', 18);
+			console.log(person01)
+
+			
+
+		</script>
+  	</body>
+</html>
+
+<style>
+.a {
+	width: 200px;
+	height: 200px;
+	margin-left: 50px;
+	background-color: antiquewhite;
+}
+</style>
