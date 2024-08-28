@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Js App</title>
+	</head>
+  	<body>
+		<div class="a" id="b1"></div>
+		<script>
+			/*
+				js在全局开始、函数开始执行时都会创建一个执行上下文，并放入执行上下文栈的栈顶
+					- 全局上下文：分为全局window（var、function在这里）和全局scope（let、const、class在这里）
+					- 函数上下文
+					- 全局上下文永久存在、函数上下文在函数执行完毕后弹出栈顶
+					- 函数执行时会按照作用域链由外到内寻找变量
+				js在执行一段代码前会有如下过程：
+					- 创建执行上下文
+					- 分析：顶级var变量提升、顶级函数声明提升、let/const/class变量提升、块中的函数声明
+					- 处理重名
+					- 绑定：var->undefined、function->初始化函数对象、块中的函数->undefined、let/const/class未初始化
+					- 执行代码
+			*/
+			function fn(a){
+                console.log(a) // a(){}
+                var a = 2 //变量声明也会提升到顶部，但在函数声明之前，但变量赋值不会提升
+                function a(){}; //函数声明会提升到作用域顶部
+                console.log(a); // 2
+            }
+            fn(1)
+
+			function fn2(){
+				let b = 8
+			}
+			console.log(c)
+			var c = 'c in global'
+
+			function fn3(){
+				console.log(c)
+			}
+			function f4(){
+				let c = 'c in f4'
+				return function(){
+					console.log(c)
+				}
+			}
+			f4()()
+		</script>
+  	</body>
+</html>
+
+<style>
+.a {
+	width: 200px;
+	height: 200px;
+	margin-left: 50px;
+	background-color: antiquewhite;
+}
+</style>
