@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Js App</title>
+	</head>
+  	<body>
+		<div class="a" id="b1"></div>
+		<script>
+            /*
+                js没有真正的异步，只是用同步模拟异步
+                    - 执行顺序简单描述是先同步、后异步
+                    - 同步任务的执行按照代码顺序和调用顺序
+                    - 异步任务解释器会将其响应回调任务放入一个任务队列，所有同步任务结束后，
+                      解释器会读取任务队列，并依次将已完成的异步任务加入调用栈中并执行。
+                异步任务详细分为宏任务和微任务
+                    - 宏任务：setTimeout、setInterval、ajax、script
+                    - 微任务：promise、process.nextTick（promise中的内容立即执行，then放进微任务）
+                    - 按照宏任务->微任务->宏任务->微任务... 的循环进行
+            */
+            // setTimeout(function(){
+            //     console.log('定时器开始啦')
+            // });
+
+            // new Promise(function(resolve){
+            //     console.log('马上执行for循环啦');
+            //     for(var i = 0; i < 10000; i++){
+            //         i == 99 && resolve();
+            //     }
+            // }).then(function(){
+            //     console.log('执行then函数啦')
+            // });
+
+            // console.log('代码执行结束');
+            /*
+                1 7 8 2 4 5 9 11 12
+                宏任务在<script>里一个执行一个，nodejs里一次执行当前的所有（不同的环境可能还不同）
+                微任务一次执行当前的所有
+                process.nextTick()只在nodejs里有，会放到所有微任务的最开始
+            */
+            console.log('1');
+
+            setTimeout(function() {
+                console.log('2');
+                // process.nextTick(function() {
+                //     console.log('3');
+                // })
+                new Promise(function(resolve) {
+                    console.log('4');
+                    resolve();
+                }).then(function() {
+                    console.log('5')
+                })
+            })
+            // process.nextTick(function() {
+            //     console.log('6');
+            // })
+            new Promise(function(resolve) {
+                console.log('7');
+                resolve();
+            }).then(function() {
+                console.log('8')
+            })
+
+            setTimeout(function() {
+                console.log('9');
+                // process.nextTick(function() {
+                //     console.log('10');
+                // })
+                new Promise(function(resolve) {
+                    console.log('11');
+                    resolve();
+                }).then(function() {
+                    console.log('12')
+                })
+            })
+		</script>
+  	</body>
+</html>
+
+<style>
+.a {
+	width: 200px;
+	height: 200px;
+	margin-left: 50px;
+	background-color: antiquewhite;
+}
+</style>

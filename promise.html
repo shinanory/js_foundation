@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Js App</title>
+	</head>
+  	<body>
+		<div class="a" id="b1"></div>
+		<script>
+            /*
+                promise状态[[PromiseState]]: pending未定 fullfiled成功 rejected失败
+                promise值[[PromiseResult]]: 成功或失败传的结果 resolve(xxx) reject(xxx)
+            */
+            // let a = new Promise((resolve, reject) => {
+            //     setTimeout(() => {
+            //         reject('失败啦')
+            //     }, 2000)
+            // })
+
+            // console.log(a)
+            // setTimeout(() => {
+            //     console.log(a)
+            // }, 2000)
+
+            // let b = a.then(res => {
+            //     console.log(res)
+            // }, err=>{
+            //     console.log(err)
+            // })
+
+            // console.log(b)
+            // setTimeout(() => {
+            //     console.log(b)
+            // }, 2000)
+
+            // let c = Promise.resolve(null)
+            // // 传值为非promise对象，则state一定成功，result为传值；传值为promise对象，则state和result和传入promise一致
+            // let d = Promise.reject('失败d')
+            // // state一定失败，result是传入的值（无论值是什么）
+            // let e = Promise.resolve('123')
+            // let f = Promise.reject('失败f')
+            // let g = Promise.all([c, d, e, f])
+
+            // setTimeout(() => {
+            //     console.log(g)
+            // }, 2000)
+		</script>
+  	</body>
+</html>
+
+<style>
+.a {
+	width: 200px;
+	height: 200px;
+	margin-left: 50px;
+	background-color: antiquewhite;
+}
+</style>
