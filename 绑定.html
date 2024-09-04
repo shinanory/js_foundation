@@ -14,14 +14,24 @@
                     (调用新函数约等于调用原函数的apply（手动实现）)
             */
 
+            // 查看某个数据的原型（用到了call）
+            console.log(Object.prototype.toString.call('30'))
+
+            // 手动实现bind
             Function.prototype.myBind = function(context){
                 if (typeof this !== "function") {
                     throw new Error("Type error");
                 }
-                let args = [...arguments].slice(1)
+                let args = [...arguments].slice(1) // 保存事先传入参数
                 let fn = this
-                console.log(fn)
+                console.log(fn) // 当前的函数
                 return function Fn(){
+                    /* 
+                        this instanceof Fn ? this : context 
+                        - 判断是否是构造函数调用（通过new xxx调用），如果是，则返回this，否则返回context
+                        args.concat(...arguments) 
+                        - 将新参数与实现传入的参数进行拼接
+                    */
                     fn.apply(this instanceof Fn ? this : context, args.concat(...arguments))
                 }
             }
@@ -37,6 +47,9 @@
             let fn2 = fn.myBind(obj)
             console.log(fn2.prototype)
             fn2(2, 3)
+
+            // let fn2 = fn.myBind(obj)
+            // let fn3 = new fn2(2, 3)
 		</script>
   	</body>
 </html>
