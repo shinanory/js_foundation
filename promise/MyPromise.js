@@ -1,3 +1,23 @@
+
+/*
+    Promise用一个函数作为参数
+    Promise内部用进行一系列初始化，内部定义了两个方法，一个用于成功，一个用于失败
+    初始化结束Promise将内部两个方法赋给传入的函数，并执行传入的函数
+
+    new Promise的时候：
+    1. 传入一个函数作为参数，函数接受两个参数，成功和失败
+    2. Promise内部进行一系列初始化
+    3. Promise内部内部定义了两个方法，一个返回成功，一个返回失败
+    4. Promise将内部两个方法赋给传入的函数，并执行传入的函数
+
+*/
+
+function t2(exc){
+    const a = () => {console.log('a')}
+    const b = () => {console.log('b')}
+    exc(a, b)
+}
+
 function MyPromise(executor){
     this.PromiseStates = 'pending'
     this.PromiseResult = null

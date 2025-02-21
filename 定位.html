@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Box App</title>
+	</head>
+  	<body>
+		<div class="container">
+			<div class="a"></div>
+			<span>123</span>
+		</div>
+		<div class="b">
+
+		</div>
+  	</body>
+</html>
+
+<style>
+.a {
+	width: 50px;
+	height: 50px;
+	border: 1px solid black;
+	background-color: antiquewhite;
+	/*
+		float 脱离文档流，形成遮盖的效果，不遮盖文字
+		position: absolute 脱离文档流，全部遮盖;相对上层的第一个非static元素定位
+		static 浏览器默认不做改动
+		relative 相对自身的默认位置定位
+		fixed 浏览器固定位置
+		sticky 粘性定位，相对自身位置定位，当滚动到指定位置时，变成固定定位;移动范围受父元素限制。
+	*/
+	position: sticky;
+	top: 10px;
+}
+.container{
+    width: 500px;
+    height: 2000px;
+	background-color: aquamarine;
+	/* position: relative;
+	left: 200px;
+	top: 100px; */
+}
+.b{
+	width: 50px;
+	height: 50px;
+	border: 1px solid black;
+	background-color: antiquewhite;
+}
+</style>

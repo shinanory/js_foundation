@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Js App</title>
+	</head>
+  	<body>
+		<div class="a" id="b1"></div>
+		<script>
+			function deepclone(obj){
+				if (obj == null){
+					return obj
+				}
+				if (typeof(obj) === "object"){
+					let newObj = Array.isArray(obj) ? []:{}
+					for (const key in obj){
+						newObj[key] = deepclone(obj[key])
+					}
+
+					return newObj
+				}
+				else{
+					return obj
+				}
+			}
+
+			// const target = {
+			// 	field1: 1,
+			// 	field2: undefined,
+			// 	field3: 'ConardLi',
+			// 	field4: {
+			// 		child: 'child',
+			// 		child2: {
+			// 			child2: 'child2'
+			// 		}
+			// 	},
+			// 	field5: [2, 3, 6]
+			// };
+			// console.log(target)
+			// console.log(deepclone(target))
+
+			function Person(name, age){ 
+				this.name = name;
+				this.age = age;
+			}
+			
+			Person.prototype.motherland = 'China'
+			let person01 = new Person('小明', 18);
+			console.log(person01)
+
+			let person02 = Object.create({a: 1}) // person02是实例，{a: 1}是实例原型
+			person02.b = 2
+			let person03 = Object.getPrototypeOf(person02)
+			console.log(person02)
+			console.log(person03)
+			console.log(person01 instanceof Person) // 判断构造函数
+
+			console.log(person02.hasOwnProperty('a'), person02.hasOwnProperty('b')) // hasOwnProperty只能找自己的
+			console.log('a' in person02, 'b' in person02) // xx in xx 可以找原型上的
+
+			const myNew = (constructor, ...params)=>{
+				// 从prototype创建新对象
+				let obj = Object.create(constructor.prototype)
+				// 改变constructor的this
+				let nc = constructor.bind(obj, ...params)
+				let result = nc()
+				// 若构造函数返回了非空对象，则new保留其返回值
+				// 若构造函数返回了其他东西，则new返回新创建的对象
+				return (typeof result === 'object' && result !== null)?result: obj
+			}
+
+			console.log(myNew(Person, 'a', 19))
+		</script>
+  	</body>
+</html>
+
+<style>
+.a {
+	width: 200px;
+	height: 200px;
+	margin-left: 50px;
+	background-color: antiquewhite;
+}
+</style>

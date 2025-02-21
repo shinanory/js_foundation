@@ -8,16 +8,15 @@
   	<body>
 		<div class="a" id="b1"></div>
 		<script>
-            let p = new MyPromise((fn1, fn2) => {
-                fn1('OK')
-            })
-            p.then(value=>{
-                console.log(value)
-            }, error=>{
-                console.log(error)
-            })
+			function t2(exc){
+				const a = () => {console.log('a')}
+				const b = () => {console.log('b')}
+				exc(a, b)
+			}
 
-            console.log(p)
+			t2(()=>{
+				console.log('c')
+			})
 		</script>
   	</body>
 </html>

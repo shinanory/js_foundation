@@ -13,6 +13,23 @@
                     localStorage : 数据不会过期，浏览器关闭数据保留；不参与网络请求
                     sessionStorage : 数据在页面关闭后清除；不参与网络请求
             */
+			function momery(func){
+				let cache = {}
+				return function(...args){
+					const _args = JSON.stringify(args)
+					if(!cache[_args]){
+						cache[_args] = func.apply(func, args)
+					}
+					return cache[_args]
+				}
+			}
+
+			const b = (a,b)=>{
+				return a+b
+			}
+
+			const a = momery(b)
+			console.log(a(100, 200))
 		</script>
   	</body>
 </html>

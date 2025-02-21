@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Js App</title>
+	</head>
+  	<body>
+		<h1>当前数字为: <span id="num"></span></h1>
+		<button id="btn">增加</button>
+		<script>
+			// Proxy在对象与操作之间架设一层拦截（代理）
+			// definePropety是在原对象上添加或修改属性、方法
+			// Reflect将 Object 对象的一些方法放到Reflect对象上进行调用，让Object操作都变成函数式而不是命令式
+			let num = new Proxy({value: 1}, {
+				get:function(target, propKey){
+					return target.value
+				},
+				set:function(target, propKey, value){
+					target.value = value
+					const ns=document.getElementById('num')
+					ns.textContent = target.value
+				},
+				has:function(target, propKey){
+					console.log('已拦截')
+					return false
+				}
+			})
+			const ns=document.getElementById('num')
+			ns.textContent = num.value
+
+			const btn=document.getElementById('btn')
+			btn.addEventListener('click', ()=>{
+				num.value += 1
+			})
+
+			console.log('value' in num)
+			console.log('name' in num)
+			console.log(Reflect.has(num, 'value'))
+			console.log(Reflect.has(num, 'name'))
+		</script>
+  	</body>
+</html>
+
+<style>
+
+</style>

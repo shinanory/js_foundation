@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Js App</title>
+	</head>
+  	<body>
+		<div class="a" id="b1"></div>
+		<script>
+			// 作用域链:函数的局部变量=>父函数的变量=>全局变量
+
+			// 闭包是指一个函数能够访问其定义时的作用域中的变量，即使在其定义的作用域已经执行完毕后。
+            // 表型形式：函数内部的函数（子函数可以读取父函数内的let变量，但外部无法访问父函数内的变量，通过将子函数作为返回值，外部可以间接访问或使用父函数的变量）
+            // 应用：隐藏数据，只提供API；保留私有状态
+			function fn(){
+                let num = 0;
+                return () => {
+                    num++
+                    console.log(num)
+                }
+            } //隐藏num，只提供读取
+
+			// 外部不能之间操作num，只能通过fn操作
+            let a = fn()
+            a()
+
+			const fn2 = (num, repeat)=>{
+				let newNum = num*2
+				let str = ''
+				return function(){
+					for(let i=0; i<repeat; i++){
+						str=str+newNum.toString()
+					}
+					console.log(str)
+				}
+			}
+			
+			// let obj={
+			// 	a: 1
+			// };
+			// (function (o) {
+			// 	console.log(o===obj);
+			// })(obj);
+			var c=1
+			let d=2 // let const声明变量不绑定全局作用域
+			console.log(c, this.c) // 1 1
+			console.log(d, this.d) // 2 undefined
+		</script>
+  	</body>
+</html>
+
+<style>
+.a {
+	width: 200px;
+	height: 200px;
+	margin-left: 50px;
+	background-color: antiquewhite;
+}
+</style>

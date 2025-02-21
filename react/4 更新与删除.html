@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="root"></div>
+</body>
+<script>
+    /*
+        规定好fiber的结构：
+          {
+            type: 节点类型
+            props: 节点属性
+            dom: 节点本次的dom
+            alternate: 上一次的dom
+            child: 子节点
+            sibling: 兄弟节点
+            parent: 父节点
+            effectTag: 标记
+          }
+    */
+    // 创建普通节点
+    function myCreateElement(type, props, ...children){
+        return {
+            type,
+            props: {
+                ...props,
+                children: children.map(child=>{
+                    return typeof child === 'object' ? child : myCreateTextElement(child)
+                })
+            }
+        }
+    }
+    // 根据fiber创建不同DOM节点
+    function myCreateTextElement(text){
+        return {
+            type: 'TEXT_ELEMENT',
+            props: {
+                nodeValue: text,
+                children: []
+            }
+        }
+    }
+
+    // 创建节点
+    function createDom(fiber){
+        const dom = fiber.type == "TEXT_ELEMENT"? document.createTextNode("") : document.createElement(fiber.type)
+        // 设置当前节点属性
+        updateDom(dom, {}, fiber.props)
+        return dom
+    }
+
+    // 提交渲染
+    function commitRoot() {
+        deletions.forEach(commitWork) // 遍历删除节点
+        commitWork(wipRoot.child) // 递归渲染子节点（根节点只有子节点）
+        currentRoot = wipRoot // 保存此次根fiber，下次对比时使用
+        wipRoot = null
+    }
+    function commitWork(fiber) {
+        if (!fiber) {
+            return
+        }
+        const domParent = fiber.parent.dom
+        // 根据effectTag进行操作
+        if (fiber.effectTag === 'PLACEMENT' && fiber.dom != null){
+            domParent.appendChild(fiber.dom) // 挂载渲染
+        }
+        else if(fiber.effectTag === 'UPDATE' && fiber.dom != null){
+            updateDom(fiber.dom, fiber.alternate.props, fiber.props) // 更新节点
+        }
+        else if(fiber.effectTag === 'DELETION'){
+            domParent.removeChild(fiber.dom) // 删除节点
+        }
+        commitWork(fiber.child) // 递归渲染子节点
+        commitWork(fiber.sibling) // 递归渲染兄弟节点
+    }
+    const isEvent = key => key.startsWith("on") // 函数：判断属性以on开头（事件）
+    const isProperty = (key)=>{ return key !== 'children' && !isEvent(key) } // 函数：判断是否为属性
+    const isNew =  (prev, next) =>{
+        return (key) => { return prev[key] !== next[key] }
+    } // 高阶函数：判断属性更新、新增
+    const isDelete = (prev, next) => { 
+        return (key) => { return !(key in next) } 
+    } // 高阶函数：判断属性删除
+    function updateDom(dom, prevProps, nextProps){
+        // 删除事件
+        Object.keys(prevProps).filter(isEvent).filter((key)=>{
+            return isDelete(prevProps, nextProps)(key) || isNew(prevProps, nextProps)(key) // 判断事件删除或更新，需要移除原来的事件监听
+        }).forEach(name=>{
+            const eventType = name.toLowerCase().substring(2) // 截取事件类型
+            dom.removeEventListener(eventType, prevProps[name])
+        })
+        // 删除属性
+        Object.keys(prevProps).filter(isProperty).filter(isDelete(prevProps, nextProps)).forEach(name=>{
+            dom[name] = ''
+        })
+        // 更新属性
+        Object.keys(nextProps).filter(isProperty).filter(isNew(prevProps, nextProps)).forEach(name=>{
+            dom[name] = nextProps[name]
+        })
+        // 增加事件
+        Object.keys(nextProps).filter(isEvent).filter(isNew(prevProps, nextProps)).forEach(name=>{
+            const eventType = name.toLowerCase().substring(2)
+            dom.addEventListener(eventType, nextProps[name])
+        })
+    }
+    
+    let nextUnitOfWork = null // 下一个工作单元
+    let wipRoot = null // 根fiber
+    let currentRoot = null // 上一次的根fiber
+    let deletions = null // 要删除的节点
+
+    // js对象渲染为DOM
+    function render(element, container){
+        wipRoot = {
+            dom: container,
+            props: {
+                children: [element]
+            },
+            alternate: currentRoot
+        }
+        deletions = [] // 清空数组
+        nextUnitOfWork = wipRoot // 开启任务
+    }
+
+    function workloop(deadline){
+        let shouldYield = false
+        while(nextUnitOfWork && !shouldYield){
+            // 执行当前工作单元并更新
+            nextUnitOfWork = performUnitOfWork(nextUnitOfWork)
+            console.log('nextUnitOfWork', nextUnitOfWork)
+            shouldYield = deadline.timeRemaining() < 1
+        }
+        // 当全部dom创建完毕后，提交本次渲染
+        if (!nextUnitOfWork && wipRoot) {
+            commitRoot()
+        }
+        requestIdleCallback(workloop)
+    }
+    requestIdleCallback(workloop)
+
+    // 一次工作单元
+    function performUnitOfWork(fiber) {
+        // 一、根据当前fiber，创建DOM节点并渲染（并存放在fiber中的dom属性）
+        if(!fiber.dom){
+            fiber.dom = createDom(fiber)
+        }
+        // 二、为当前fiber的子节点创建fiber
+        const elements = fiber.props.children
+        reconcileChildren(fiber, elements)
+        // 三、根据关系寻找下一个工作单元
+        if(fiber.child){
+            return fiber.child // 先找子节点
+        }
+        let nextFiber = fiber
+        while(nextFiber){
+            if (nextFiber.sibling) {
+                return nextFiber.sibling // 再找兄弟节点
+            }
+            nextFiber = nextFiber.parent // 没有兄弟节点则指向父节点
+        }
+    }
+    // 为当前fiber的子节点创建fiber
+    function reconcileChildren(fiber, elements){
+        let index = 0
+        let oldFiber = fiber.alternate && fiber.alternate.child // 存在fiber.alternate则获取child（child也可能为null），否则为null
+        let prevSibling = null
+        while(index < elements.length || oldFiber != null){
+            console.log('oldFiber', oldFiber)
+            const element = elements[index]
+            console.log('element', element)
+            let newFiber = null
+
+            const sameType = oldFiber && element && element.type === oldFiber.type // 判断新旧节点均存在，且为同一类型
+            // 创建新Fiber
+            if (sameType){ // 相同类型的节点
+                newFiber ={
+                    type: oldFiber.type, // 类型不变
+                    props: element.props, // props更新
+                    dom: oldFiber.dom, // dom不变
+                    parent: fiber,
+                    alternate: oldFiber,
+                    effectTag: 'UPDATE' // 标记更新
+                }
+            }
+            if (element && !sameType){ // 非相同类型，且需要新节点
+                newFiber = {
+                    type: element.type,
+                    props: element.props,
+                    dom: null,
+                    parent: fiber,
+                    alternate: null,
+                    effectTag: "PLACEMENT", // 标记加入
+                }
+            }
+            if (oldFiber && !sameType){ // 非相同类型，且旧节点需要删除
+                oldFiber.effectTag = "DELETION" // 标记删除
+                deletions.push(oldFiber) // 记录要删除的节点
+            }
+            if (oldFiber) {
+                oldFiber = oldFiber.sibling // 更新oldFiber的指向
+            }
+            console.log('当前', fiber)
+            console.log('创建fiber', newFiber)
+            console.log('兄弟', prevSibling)
+            
+            // 设置关系
+            if(index === 0){
+                fiber.child = newFiber // 设置父节点的第一个子节点
+            }
+            else{
+                prevSibling.sibling = newFiber // 设置为上一个节点的同级节点
+            }
+            // 计数更新
+            prevSibling = newFiber
+            index++
+        }
+    }
+
+
+
+    const container = document.getElementById('root')
+    function handleInput(e){
+        rerender(e.target.value)
+    }
+    function rerender(value){
+        // 模拟JSX => JS
+        const element = myCreateElement(
+            'div',
+            {},
+            myCreateElement('input', {onInput: handleInput, value: value}),
+            myCreateElement('h3', {title: 'content'}, `hello ${value}`)
+        )
+        // JS => 渲染
+        render(element, container)
+    }
+    rerender('world')
+
+</script>
+</html>

@@ -19,9 +19,9 @@
 			BFC是一类区域，该区域内元素不受外部元素的影响
 			overflow可以创建BFC
 			作用:
-			1. 计算检测浮动元素高度
+			1. 计算检测内部float元素的高度（普通div在内部元素float脱离文档流后不会被撑开，但是如果这个div是BFC区域则会被撑开）
 			2. 解决margin塌陷
-			3. 左右分栏布局（BFC区域不会和float产生交集）（固定大盒子宽度，子盒子可以自适应）
+			3. 左右分栏布局（BFC区域不会和float产生交集，会躲开外部的float的元素）（固定大盒子宽度，子盒子可以自适应）
 		-->
 		<div style="background-color: aquamarine; overflow: auto;">
 			<div class="a" style="float: left;"></div>

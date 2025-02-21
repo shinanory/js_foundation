@@ -18,6 +18,22 @@
                     - 微任务：promise、process.nextTick（promise中的内容立即执行，then放进微任务）
                     - 按照宏任务->微任务->宏任务->微任务... 的循环进行
             */
+            // 1 2 3 4 5 
+            new Promise((resolve, reject)=>{
+                console.log(1)
+                setTimeout(()=>{
+                    console.log(5)
+                }, 0)
+                resolve()
+            }).then(res=>{
+                console.log(3)
+                return 'ok'
+            }).then(res=>{ // 若微任务在执行过程中产生了新的微任务，则继续执行微任务
+                console.log(4)
+            })
+            console.log(2)
+
+
             // setTimeout(function(){
             //     console.log('定时器开始啦')
             // });
@@ -38,42 +54,42 @@
                 微任务一次执行当前的所有
                 process.nextTick()只在nodejs里有，会放到所有微任务的最开始
             */
-            console.log('1');
+            // console.log('1');
 
-            setTimeout(function() {
-                console.log('2');
-                // process.nextTick(function() {
-                //     console.log('3');
-                // })
-                new Promise(function(resolve) {
-                    console.log('4');
-                    resolve();
-                }).then(function() {
-                    console.log('5')
-                })
-            })
-            // process.nextTick(function() {
-            //     console.log('6');
+            // setTimeout(function() {
+            //     console.log('2');
+            //     // process.nextTick(function() {
+            //     //     console.log('3');
+            //     // })
+            //     new Promise(function(resolve) {
+            //         console.log('4');
+            //         resolve();
+            //     }).then(function() {
+            //         console.log('5')
+            //     })
             // })
-            new Promise(function(resolve) {
-                console.log('7');
-                resolve();
-            }).then(function() {
-                console.log('8')
-            })
+            // // process.nextTick(function() {
+            // //     console.log('6');
+            // // })
+            // new Promise(function(resolve) {
+            //     console.log('7');
+            //     resolve();
+            // }).then(function() {
+            //     console.log('8')
+            // })
 
-            setTimeout(function() {
-                console.log('9');
-                // process.nextTick(function() {
-                //     console.log('10');
-                // })
-                new Promise(function(resolve) {
-                    console.log('11');
-                    resolve();
-                }).then(function() {
-                    console.log('12')
-                })
-            })
+            // setTimeout(function() {
+            //     console.log('9');
+            //     // process.nextTick(function() {
+            //     //     console.log('10');
+            //     // })
+            //     new Promise(function(resolve) {
+            //         console.log('11');
+            //         resolve();
+            //     }).then(function() {
+            //         console.log('12')
+            //     })
+            // })
 		</script>
   	</body>
 </html>

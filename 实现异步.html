@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Js App</title>
+	</head>
+  	<body>
+		<div class="a" id="b1"></div>
+		<script>
+			// generate迭代器
+			// yield表达式表示每次迭代返回的状态
+			// next()使函数进行到下一个状态，直接调用函数不会发生任何事情，必须进行一次next()
+			function* gen(){
+				let num=0
+				console.log(num) // 0
+				num++
+				yield num
+				console.log(num) // 1
+				num++
+				return num
+			}
+
+			let g=gen()
+			console.log(g.next()) // value:1, done:false
+			console.log(g.next()) // value:2, done:true
+
+			function* gen2(){
+				let num=0
+				console.log(num)
+				num++
+				let num2=yield num
+				console.log(num2) // 50
+				num2++
+				return num2
+			}
+
+			let g2=gen2()
+			// 初次调用next不能传参
+			console.log(g2.next())
+			// 之后传参作为yield表达式的结果
+			console.log(g2.next(50)) // value:51, done:true
+		</script>
+  	</body>
+</html>
+
+<style>
+.a {
+	width: 200px;
+	height: 200px;
+	margin-left: 50px;
+	background-color: antiquewhite;
+}
+</style>

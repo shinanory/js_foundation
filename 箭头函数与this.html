@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Js App</title>
+	</head>
+  	<body>
+		<div class="a" id="b1"></div>
+		<script>
+			const fn3=()=>{
+				console.log(this)
+			}
+			function fn4(){
+				console.log(this)
+			}
+			// 箭头函数没有自己的this，箭头函数中的this为函数定义环境的this，若不存在则继续向上找，直到找到window
+			fn3() // window
+			fn4() // window
+			let obj = {
+				func1: fn3,
+				func2: fn4
+			}
+			// 箭头函数中的this在函数定义时已经固定了，不会随调用对象的不同而改变
+			obj.func1() // window
+			obj.func2() // obj
+			const fn5 = (a, b, ...c)=>{ // 使用...xxx 接收未知数量参数
+				console.log(a)
+				console.log(b)
+				console.log(c)
+				console.log(...c)
+			}
+			fn5(1, 2, 3, 4, 5)
+		</script>
+  	</body>
+</html>
+
+<style>
+.a {
+	width: 200px;
+	height: 200px;
+	margin-left: 50px;
+	background-color: antiquewhite;
+}
+</style>
